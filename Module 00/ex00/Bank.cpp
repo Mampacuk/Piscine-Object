@@ -6,6 +6,8 @@ Bank::Account::Account() : _id(_count++), _value(0) {}
 
 Bank::Account::Account(int value) : _id(_count++), _value(value) {}
 
+Bank::Account::~Account() {}
+
 int Bank::Account::get_id() const
 {
 	return (_id);

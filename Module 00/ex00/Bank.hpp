@@ -18,6 +18,7 @@ struct Bank
 				Account(const Account&);
 				Account &operator=(const Account&);
 			public:
+				~Account();
 				int get_id() const;
 				int get_value() const;
 				friend class Bank;
