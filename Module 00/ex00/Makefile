@@ -1,6 +1,6 @@
-NAME		= megaphone
+NAME		= ex00
 
-SRCS		= megaphone.cpp
+SRCS		= Bank.cpp main.cpp
 OBJS		= $(SRCS:.cpp=.o)
 CXX			= c++
 CXXFLAGS	= -Wall -Wextra -Werror -std=c++98
