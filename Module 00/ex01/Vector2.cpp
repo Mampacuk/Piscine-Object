@@ -35,3 +35,8 @@ bool operator!=(const Vector2 &lhs, const Vector2 &rhs)
 {
     return (!(lhs == rhs));
 }
+
+bool operator<(const Vector2 &lhs, const Vector2 &rhs)
+{
+    return (lhs.get_x() < rhs.get_x() || (!(rhs.get_x() < lhs.get_x()) && lhs.get_y() < rhs.get_y()));
+}

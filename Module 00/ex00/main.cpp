@@ -3,23 +3,23 @@
 #define GREEN "\033[32m"
 #define BANK_INITIAL_DEPOSIT 1000
 
-#include "Bank.hpp"
-
 #define EXPECT_EQ(x, y) \
     if (!(x == y)) \
-        std::cerr << RED "FAILURE: not equal WHEN EXPECTING equal" RESET << std::endl; \
+        std::cerr << RED "FAILURE: " RESET #x RED " != " RESET #y << std::endl; \
     else \
-        std::cout << GREEN "SUCCESS: equal WHEN EXPECTING equal" RESET << std::endl;
+        std::cout << GREEN "SUCCESS: " RESET #x GREEN " == " RESET #y << std::endl;
 
 #define EXPECT_THROW(x) try \
 { \
     x; \
-    std::cerr << RED "FAILURE: no throw happened!" RESET << std::endl; \
+    std::cerr << RED "FAILURE: " RESET #x RED " didn't throw!" RESET << std::endl; \
 } \
 catch (const std::exception &e) \
 { \
-    std::cout << GREEN "SUCCESS: caught an exception: " << e.what() << RESET << std::endl; \
+    std::cout << GREEN "SUCCESS: caught an exception from " RESET #x GREEN ": " << e.what() << RESET << std::endl; \
 }
+
+#include "Bank.hpp"
 
 int main()
 {

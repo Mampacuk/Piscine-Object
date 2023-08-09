@@ -13,22 +13,37 @@ Line::Line(const Vector2 &p1, const Vector2 &p2) :
 
 Line::Line(const Line &copy) : _x_factor(copy._x_factor), _y_factor(copy._y_factor), _offset(copy._offset) {}
 
+float Line::get_x_factor() const
+{
+    return (_x_factor);
+}
+
+float Line::get_y_factor() const
+{
+    return (_y_factor);
+}
+
+float Line::get_offset() const
+{
+    return (_offset);
+}
+
+// _x_factor * x + _y_factor * ? + _offset = 0
+// _x_factor * ? = -(_y_factor * y + _offset)
+// ? = -(_y_factor * y + _offset) / _x_factor
 Vector2 Line::solve_for_x(float y) const
 {
-    // _x_factor * x + _y_factor * ? + _offset = 0
-    // _x_factor * ? = -(_y_factor * y + _offset)
-    // ? = -(_y_factor * y + _offset) / _x_factor
-    if (_x_factor == 0)
+    if (std::fabs(_x_factor) < std::numeric_limits<float>::epsilon())
         throw std::logic_error("Can't find a point on a horizontal line only by its y-coordinate");
     return (Vector2(-(_y_factor * y + _offset) / _x_factor, y));
 }
 
+// _x_factor * x + _y_factor * ? + _offset = 0
+// _y_factor * ? = -(_x_factor * x + _offset)
+// ? = -(_x_factor * x + _offset) / _y_factor
 Vector2 Line::solve_for_y(float x) const
 {
-    // _x_factor * x + _y_factor * ? + _offset = 0
-    // _y_factor * ? = -(_x_factor * x + _offset)
-    // ? = -(_x_factor * x + _offset) / _y_factor
-    if (_y_factor == 0)
+    if (std::fabs(_y_factor) < std::numeric_limits<float>::epsilon())
         throw std::logic_error("Can't find a point on a vertical line only by its x-coordinate");
     return (Vector2(x, -(_x_factor * x + _offset) / _y_factor));
 }

@@ -1,14 +1,15 @@
 #include "Graph.hpp"
 
-Graph::Graph() : _points() {}
+Graph::Graph() : _points(), _lines() {}
 
 Graph::~Graph() {}
 
-Graph::Graph(const Graph &copy) : _points(copy._points) {}
+Graph::Graph(const Graph &copy) : _points(copy._points), _lines(copy._lines) {}
 
 Graph &Graph::operator=(const Graph &rhs)
 {
     _points = rhs._points;
+    _lines = rhs._lines;
     return (*this);
 }
 
@@ -61,12 +62,28 @@ void Graph::show(int xlim_min, int xlim_max, int ylim_min, int ylim_max) const
     {
         const int it_x = static_cast<int>(std::roundf(it->get_x()));
         const int it_y = static_cast<int>(std::roundf(it->get_y()));
-        if (it_x > xlim_min && it_x < xlim_max && it_y > ylim_min && it_y < ylim_max)
+        if (it_x >= xlim_min && it_x <= xlim_max && it_y >= ylim_min && it_y <= ylim_max)
             visible_set.insert(Vector2(it_x, it_y));
     }
-    for (line_vector::const_iterator it = _lines.begin(); it != _lines.end(); ++it)
-        for (int x = xlim_min; x <= xlim_max; ++x)
-            visible_set.insert(Vector2(x, static_cast<int>(std::roundf(it->solve_for_y(x).get_y()))));
+    for (line_vector::const_iterator line = _lines.begin(); line != _lines.end(); ++line)
+    {
+        try
+        {
+            for (int x = xlim_min; x <= xlim_max; ++x)
+            {
+                const Vector2 p = Vector2(x, static_cast<int>(std::roundf(line->solve_for_y(x).get_y())));
+                if (p.get_x() >= xlim_min && p.get_x() <= xlim_max && p.get_y() >= ylim_min && p.get_y() <= ylim_max)
+                    visible_set.insert(p);
+            }
+        }
+        catch (const std::logic_error&)
+        {
+            const int x_value = static_cast<int>(std::roundf(-line->get_offset() / line->get_x_factor()));
+            if (x_value >= xlim_min && x_value <= xlim_max)
+                for (int y = ylim_min; y <= ylim_max; y++)
+                    visible_set.insert(Vector2(x_value, y));
+        }
+    }
     for (int y = ylim_max; y >= ylim_min; y--)
     {
         std::cout << '&' << (std::abs(y) % 10);
