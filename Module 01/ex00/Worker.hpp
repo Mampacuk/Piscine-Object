@@ -22,16 +22,31 @@
 // but instead, says that objects of a type are simultaneously objects of another type.
 // 
 // src: https://en.wikipedia.org/wiki/Object_composition
+// 
+// say, composition is good when you need properties/functionality that are common in classes
+// that are drastically (!) different: it avoids the interfaces (contracts) that are enforced
+// by inheritance, also prevent unwanted polymorphism.
+// example: both Player and Enemy have a Position. However, win_game(...) shouldn't expect
+// anyone who has a Position. or, both have Healthbar, but only for Player replenish_health(...)
+// must be usable.
 class Worker
 {
-    private:
-        Position coordonnee;
-        Statistic stat;
-    public:
-        Worker();
-        ~Worker();
-        Worker(const Worker &copy);
-        Worker &operator=(const Worker &copy);
+	private:
+		Position coordonnee;
+		Statistic stat;
+	public:
+		Worker();
+		~Worker();
+		Worker(const Position &coordonnee, const Statistic &stat);
+		Worker(const Worker &copy);
+		Worker &operator=(const Worker &copy);
+		int get_x() const;
+		int get_y() const;
+		int get_z() const;
+		int get_level() const;
+		int get_exp() const;
 };
+
+std::ostream &operator<<(std::ostream &o, const Worker &w);
 
 #endif
