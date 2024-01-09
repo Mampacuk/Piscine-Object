@@ -12,7 +12,7 @@ Tool::~Tool()
 		std::cout << ", owner: " << *_owner;
 	std::cout << ") destroyed" << std::endl;
 	if (_owner)
-		_owner->remove_tool(this);
+		_owner->unequip(this);
 }
 
 void Tool::increment_usage()
@@ -22,12 +22,16 @@ void Tool::increment_usage()
 	++_number_of_uses;
 }
 
-void Tool::set_owner(Worker *owner)
+const Worker *Tool::get_owner() const
 {
-	if (!owner) return ;
+	return (_owner);
+}
+
+void Tool::set_owner(Worker *new_owner)
+{
 	if (!_owner)
 		_owner->unequip(this);
-	_owner = owner;
+	_owner = new_owner;
 	_owner->equip(this);
 }
 

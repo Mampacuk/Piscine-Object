@@ -7,6 +7,11 @@
 
 class WorkshopBase
 {
+	private:
+		// deleted {
+		WorkshopBase(const WorkshopBase&) {}
+		WorkshopBase &operator=(const WorkshopBase&) {}
+		// } deleted
 	protected:
 		typedef std::set<Worker*> workers;
 		workers _workers;
@@ -14,26 +19,17 @@ class WorkshopBase
 		WorkshopBase() : _workers() {}
 		virtual ~WorkshopBase()
 		{
-			
-		}
-		WorkshopBase(const WorkshopBase &copy) : _workers(copy._workers) {}
-		WorkshopBase &operator=(const WorkshopBase &rhs)
-		{
-			_workers = rhs._workers;
-			return (*this);
+			for (workers::iterator it = _workers.begin(); it != _workers.end(); ++it)
+				(*it)->leave(this);
 		}
 
-		virtual void add_worker(Worker *worker) = 0;
-
-		void remove_worker(Worker *worker)
+		void remove(Worker *worker)
 		{
 			if (!worker)
 				return ;
 			size_t erased = _workers.erase(worker);
 			if (erased)
-			{
-				worker->leave_workshop(this);
-			}
+				worker->leave(this);
 		}
 };
 
@@ -50,16 +46,15 @@ class Workshop : public WorkshopBase
 			return (*this);
 		}
 
-		void add_worker(Worker *worker)
+		void enlist(Worker *worker)
 		{
-			if (!worker)
+			if (!worker || _workers.find(worker) != _workers.end())
 				return ;
-			if (!worker->GetTool<ToolType>())
-				throw std::runtime_error("Can't add worker without required tool");
-			if (_workers.find(worker) != _workers.end())
-				return ;
+			Tool *free_tool = worker->GetTool<ToolType>(true);
+			if (!free_tool)
+				throw std::runtime_error("Can't enlist worker without required tool");
 			_workers.insert(worker);
-			worker->enroll_workshop(this);
+			worker->enroll(this);
 		}
 };
 

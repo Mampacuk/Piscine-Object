@@ -8,6 +8,8 @@ Worker::Worker() : _coordonnee(), _stats()
 Worker::~Worker()
 {
 	std::cout << *this << " destroyed" << std::endl;
+	for (tool_workshop::iterator it = _tool_workshop.begin(); it != _tool_workshop.end(); ++it)
+		unequip(it->first);
 }
 
 Worker::Worker(const Position &coordonnee, const Statistic &stat) : _coordonnee(coordonnee), _stats(stat)
@@ -55,43 +57,63 @@ int Worker::get_exp() const
 
 void Worker::equip(Tool *tool)
 {
-	if (!tool)
+	if (!tool || _tool_workshop.find(tool) != _tool_workshop.end())
 		return ;
-	tool->set_owner(this);
 	_tool_workshop.insert(std::make_pair(tool, static_cast<WorkshopBase*>(NULL)));
+	tool->set_owner(this);
 }
 
 void Worker::unequip(Tool *tool)
 {
-	size_t erased = _tool_workshop.erase(tool);
-	if (erased)
-		tool->set_owner(NULL);
-}
-
-void Worker::enroll_workshop(WorkshopBase *workshop)
-{
-	if (!workshop || _workshops.find(workshop) != _workshops.end())
+	if (!tool)
 		return ;
-	_workshops.insert(workshop);
-	try
+	tool_workshop::iterator link = _tool_workshop.find(tool);
+	if (link != _tool_workshop.end())
 	{
-		workshop->add_worker(this);
-	}
-	catch(const std::runtime_error&)
-	{
-		_workshops.erase(workshop);
+		if (link->second)
+			link->second->remove(this);
+		_tool_workshop.erase(tool);
+		tool->set_owner(NULL);
 	}
 }
 
-void Worker::leave_workshop(WorkshopBase *workshop)
+void Worker::leave(WorkshopBase *workshop)
 {
 	if (!workshop)
 		return ;
-	size_t erased = _workshops.erase(workshop);
-	if (erased)
-	{
-		workshop->remove_worker(this);
-	}
+	tool_workshop::iterator it = _tool_workshop.begin();
+	for (; it != _tool_workshop.end(); ++it)
+		if (it->second == workshop)
+			break ;
+	if (it == _tool_workshop.end())
+		return ;
+	it->second = NULL;
+	workshop->remove(this);
+}
+
+void Worker::work(Tool *tool)
+{
+	tool_workshop::const_iterator it = _tool_workshop.begin();
+	for (; it != _tool_workshop.end(); ++it)
+		if (it->second)
+}
+
+Worker::tool_workshop::iterator Worker::find_tool(Tool *tool)
+{
+	tool_workshop::iterator it = _tool_workshop.begin();
+	for (; it != _tool_workshop.end(); ++it)
+		if (it->first == tool)
+			break ;
+	return (it);
+}
+
+Worker::tool_workshop::iterator Worker::find_workshop(WorkshopBase *workshop)
+{
+	tool_workshop::iterator it = _tool_workshop.begin();
+	for (; it != _tool_workshop.end(); ++it)
+		if (it->second == workshop)
+			break ;
+	return (it);
 }
 
 std::ostream &operator<<(std::ostream &o, const Worker &w)

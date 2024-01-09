@@ -24,7 +24,8 @@ catch (const std::exception &e) \
 
 int main()
 {
-	Worker worker1;
+	// create 3-way link; destroy the members
+		Worker worker1;
 	Worker worker2;
 	Shovel shovel;
 	Hammer hammer;
@@ -35,22 +36,36 @@ int main()
 	
 	EXPECT_EQ(worker1.GetTool<Shovel>(), NULL)
 
-	worker1.add_tool(&shovel);
+	worker1.equip(&shovel);
 	EXPECT_EQ(worker1.GetTool<Shovel>(), &shovel)
 	EXPECT_EQ(shovel.get_owner(), &worker1)
 	shovel.use();
 	EXPECT_EQ(shovel.get_number_of_uses(), 1)
 
-	worker1.add_tool(&hammer);
+	worker1.equip(&hammer);
 	hammer.use();
 	EXPECT_EQ(worker1.GetTool<Hammer>(), &hammer)
 
-
-	worker2.add_tool(&shovel);
+	worker2.equip(&shovel);
 	EXPECT_EQ(worker1.GetTool<Shovel>(), NULL)
 	
-	worker2.remove_tool(&shovel);
+	worker2.unequip(&shovel);
 	EXPECT_EQ(worker2.GetTool<Shovel>(), NULL)
-	worker1.remove_tool(&hammer);
+	worker1.unequip(&hammer);
 	EXPECT_EQ(worker1.GetTool<Hammer>(), NULL)
+	{
+		Worker worker3;
+
+		worker3.equip(&shovel);
+		EXPECT_EQ(shovel.get_owner(), &worker3)
+	}
+	EXPECT_EQ(shovel.get_owner(), NULL)
+
+	{
+		Shovel shov;
+
+		worker1.unequip(&shov);
+		EXPECT_EQ(worker1.GetTool<Shovel>(), &shov)
+	}
+	EXPECT_EQ(worker1.GetTool<Shovel>(), NULL)
 }
