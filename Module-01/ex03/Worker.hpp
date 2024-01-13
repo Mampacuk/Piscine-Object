@@ -7,7 +7,7 @@
 
 # include <map>
 
-class WorkshopBase;
+# include "Workshop.hpp"
 
 class Worker
 {
@@ -32,8 +32,7 @@ class Worker
 		void unequip(Tool *tool);
 		void enroll(WorkshopBase *workshop);
 		void leave(WorkshopBase *workshop);
-		void work(Tool *tool);
-		const WorkshopBase *GetWorkshop(const Tool *tool) const;
+		void work(WorkshopBase *workshop);
 
 		template <class ToolType>
 		ToolType *GetTool(bool is_free = false)
@@ -59,7 +58,7 @@ class Worker
 		{
 			if (!workshop)
 				return ;
-			if (find_workshop() != _tool_workshop.end())
+			if (find_workshop(workshop) != _tool_workshop.end())
 				return ;
 			Tool *tool = GetTool<ToolType>(true);
 			if (!tool)
@@ -78,7 +77,5 @@ class Worker
 };
 
 std::ostream &operator<<(std::ostream &o, const Worker &w);
-
-# include "Workshop.hpp"
 
 #endif

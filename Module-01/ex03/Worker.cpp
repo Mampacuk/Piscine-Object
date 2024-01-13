@@ -81,21 +81,19 @@ void Worker::leave(WorkshopBase *workshop)
 {
 	if (!workshop)
 		return ;
-	tool_workshop::iterator it = _tool_workshop.begin();
-	for (; it != _tool_workshop.end(); ++it)
-		if (it->second == workshop)
-			break ;
+	tool_workshop::iterator it = find_workshop(workshop);
 	if (it == _tool_workshop.end())
 		return ;
 	it->second = NULL;
 	workshop->remove(this);
 }
 
-void Worker::work(Tool *tool)
+void Worker::work(WorkshopBase *workshop)
 {
-	tool_workshop::const_iterator it = _tool_workshop.begin();
-	for (; it != _tool_workshop.end(); ++it)
-		if (it->second)
+	tool_workshop::iterator it = find_workshop(workshop);
+	if (it == _tool_workshop.end())
+		throw std::runtime_error("Worker can't work at a workshop they aren't registered in");
+	it->first->use();
 }
 
 Worker::tool_workshop::iterator Worker::find_tool(Tool *tool)

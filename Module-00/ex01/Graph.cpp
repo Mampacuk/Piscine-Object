@@ -60,8 +60,8 @@ void Graph::show(int xlim_min, int xlim_max, int ylim_min, int ylim_max) const
 	point_set visible_set;
 	for (point_vector::const_iterator it = _points.begin(); it != _points.end(); ++it)
 	{
-		const int it_x = static_cast<int>(std::roundf(it->get_x()));
-		const int it_y = static_cast<int>(std::roundf(it->get_y()));
+		const int it_x = static_cast<int>(it->get_x());
+		const int it_y = static_cast<int>(it->get_y());
 		if (it_x >= xlim_min && it_x <= xlim_max && it_y >= ylim_min && it_y <= ylim_max)
 			visible_set.insert(Vector2(it_x, it_y));
 	}
@@ -71,14 +71,14 @@ void Graph::show(int xlim_min, int xlim_max, int ylim_min, int ylim_max) const
 		{
 			for (int x = xlim_min; x <= xlim_max; ++x)
 			{
-				const Vector2 p = Vector2(x, static_cast<int>(std::roundf(line->solve_for_y(x).get_y())));
+				const Vector2 p = Vector2(x, static_cast<int>(line->solve_for_y(x).get_y()));
 				if (p.get_x() >= xlim_min && p.get_x() <= xlim_max && p.get_y() >= ylim_min && p.get_y() <= ylim_max)
 					visible_set.insert(p);
 			}
 		}
 		catch (const std::logic_error&)
 		{
-			const int x_value = static_cast<int>(std::roundf(-line->get_offset() / line->get_x_factor()));
+			const int x_value = static_cast<int>(-line->get_offset() / line->get_x_factor());
 			if (x_value >= xlim_min && x_value <= xlim_max)
 				for (int y = ylim_min; y <= ylim_max; y++)
 					visible_set.insert(Vector2(x_value, y));

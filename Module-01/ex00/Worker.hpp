@@ -27,8 +27,9 @@
 // that are drastically (!) different: it avoids the interfaces (contracts) that are enforced
 // by inheritance, also prevent unwanted polymorphism.
 // example: both Player and Enemy have a Position. However, win_game(...) shouldn't expect
-// anyone who has a Position. or, both have Healthbar, but only for Player replenish_health(...)
-// must be usable.
+// anyone who has a Position, so we expect concrete type instead of polymorphism. or, both have Healthbar,
+// but only for Player replenish_health(...) must be usable => don't expose Healthbar's replenishing methods
+// in the Enemy class, but do so for the Player.
 class Worker
 {
 	private:

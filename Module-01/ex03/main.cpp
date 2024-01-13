@@ -25,7 +25,7 @@ catch (const std::exception &e) \
 int main()
 {
 	// create 3-way link; destroy the members
-		Worker worker1;
+	Worker worker1;
 	Worker worker2;
 	Shovel shovel;
 	Hammer hammer;

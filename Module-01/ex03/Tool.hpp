@@ -1,6 +1,8 @@
 #ifndef TOOL_HPP
 # define TOOL_HPP
 
+# include <iostream>
+
 class Worker;
 
 class Tool

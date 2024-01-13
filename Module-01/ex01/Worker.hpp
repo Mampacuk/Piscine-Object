@@ -7,6 +7,9 @@
 
 // AGGREGATION:
 //
+// Aggregation differs from ordinary composition in that it does not imply ownership.
+// In composition, when the owning object is destroyed, so are the contained objects.
+// In aggregation, this is not necessarily true.
 class Worker
 {
 	private:

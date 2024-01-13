@@ -5,7 +5,9 @@ SRCS		= main.cpp \
 			  Statistic.cpp \
 			  Worker.cpp \
 			  Shovel.cpp \
-			  Tool.cpp
+			  Tool.cpp \
+			  Hammer.cpp \
+			  WorkshopBase.cpp
 OBJS		= $(SRCS:.cpp=.o)
 CXX			= c++
 CXXFLAGS	= -Wall -Wextra -Werror -std=c++98
