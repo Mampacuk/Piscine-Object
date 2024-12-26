@@ -10,11 +10,11 @@ struct Bank
 		struct Account
 		{
 			private:
-				int _id;
+				const int _id;
 				int _value;
 				static int _count;
 				Account();
-				Account(int value);
+				Account(const int value);
 				Account(const Account&);
 				Account &operator=(const Account&);
 			public:
@@ -33,19 +33,19 @@ struct Bank
 		Bank &operator=(const Bank&);
 		// } deleted
 
-		int charge_commission(int inflow);
-		Account &operator[](int id);
+		int charge_commission(const int inflow);
+		Account &operator[](const int id);
 	public:
 		Bank();
 		Bank(int liquidity);
 		~Bank();
 		int get_liquidity() const;
-		const Account &operator[](int id) const;
-		const Account &create_account(int initial_deposit = 0);
-		int delete_account(int id);
-		const Account &give_loan(int id, int loan);
-		const Account &debit_account(int id, int debit);
-		const Account &credit_account(int id, int credit);
+		const Account &operator[](const int id) const;
+		const Account &create_account(const int initial_deposit = 0);
+		int delete_account(const int id);
+		const Account &give_loan(const int id, const int loan);
+		const Account &debit_account(const int id, const int debit);
+		const Account &credit_account(const int id, const int credit);
 };
 
 std::ostream &operator<<(std::ostream &stream, const Bank::Account &account);

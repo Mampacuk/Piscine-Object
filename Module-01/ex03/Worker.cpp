@@ -8,8 +8,8 @@ Worker::Worker() : _coordonnee(), _stats()
 Worker::~Worker()
 {
 	std::cout << *this << " destroyed" << std::endl;
-	for (tool_workshop::iterator it = _tool_workshop.begin(); it != _tool_workshop.end(); ++it)
-		unequip(it->first);
+	for (tool_workshop::iterator it = _tool_workshop.begin(); it != _tool_workshop.end();)
+		unequip((it++)->first);
 }
 
 Worker::Worker(const Position &coordonnee, const Statistic &stat) : _coordonnee(coordonnee), _stats(stat)
@@ -94,15 +94,6 @@ void Worker::work(WorkshopBase *workshop)
 	if (it == _tool_workshop.end())
 		throw std::runtime_error("Worker can't work at a workshop they aren't registered in");
 	it->first->use();
-}
-
-Worker::tool_workshop::iterator Worker::find_tool(Tool *tool)
-{
-	tool_workshop::iterator it = _tool_workshop.begin();
-	for (; it != _tool_workshop.end(); ++it)
-		if (it->first == tool)
-			break ;
-	return (it);
 }
 
 Worker::tool_workshop::iterator Worker::find_workshop(WorkshopBase *workshop)

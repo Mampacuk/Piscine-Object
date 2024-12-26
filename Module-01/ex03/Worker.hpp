@@ -7,7 +7,7 @@
 
 # include <map>
 
-# include "Workshop.hpp"
+# include "WorkshopBase.hpp"
 
 class Worker
 {
@@ -54,26 +54,23 @@ class Worker
 		}
 
 		template <class ToolType>
-		void enroll(Workshop<ToolType> *workshop)
+		void enroll(WorkshopBase *workshop)
 		{
 			if (!workshop)
 				return ;
 			if (find_workshop(workshop) != _tool_workshop.end())
 				return ;
-			Tool *tool = GetTool<ToolType>(true);
-			if (!tool)
-				return ;
+			Tool *free_tool = GetTool<ToolType>(true);
+			if (!free_tool)
+				throw std::runtime_error("Can't enroll into a workshop without a free required tool");
 			else
 			{
-				_tool_workshop[tool] = workshop;
+				_tool_workshop[free_tool] = workshop;
 				workshop->enlist(this);
 			}
 		}
 	private:
-		tool_workshop::iterator find_tool(Tool *tool);
-		tool_workshop::const_iterator find_tool(Tool *tool) const;
 		tool_workshop::iterator find_workshop(WorkshopBase *workshop);
-		tool_workshop::const_iterator find_workshop(WorkshopBase *workshop) const;
 };
 
 std::ostream &operator<<(std::ostream &o, const Worker &w);

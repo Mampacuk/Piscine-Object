@@ -21,11 +21,8 @@ class Workshop : public WorkshopBase
 		{
 			if (!worker || _workers.find(worker) != _workers.end())
 				return ;
-			Tool *free_tool = worker->GetTool<ToolType>(true);
-			if (!free_tool)
-				throw std::runtime_error("Can't enlist worker without a free required tool");
+			worker->enroll<ToolType>(this);
 			_workers.insert(worker);
-			worker->enroll(this);
 		}
 };
 

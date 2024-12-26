@@ -29,10 +29,11 @@ const Worker *Tool::get_owner() const
 
 void Tool::set_owner(Worker *new_owner)
 {
-	if (!_owner)
+	if (_owner)
 		_owner->unequip(this);
 	_owner = new_owner;
-	_owner->equip(this);
+	if (_owner)
+		_owner->equip(this);
 }
 
 int Tool::get_number_of_uses() const

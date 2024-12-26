@@ -4,7 +4,7 @@ int Bank::Account::_count = 0;
 
 Bank::Account::Account() : _id(_count++), _value(0) {}
 
-Bank::Account::Account(int value) : _id(_count++), _value(value) {}
+Bank::Account::Account(const int value) : _id(_count++), _value(value) {}
 
 Bank::Account::~Account() {}
 
@@ -26,7 +26,7 @@ std::ostream &operator<<(std::ostream &stream, const Bank::Account &account)
 
 Bank::Bank() : _liquidity(0), _client_accounts() {}
 
-Bank::Bank(int _liquidity) : _liquidity(_liquidity), _client_accounts()
+Bank::Bank(const int _liquidity) : _liquidity(_liquidity), _client_accounts()
 {
 	if (_liquidity < 0)
 		throw std::invalid_argument("Can't start a bank with negative liquidity");
@@ -43,7 +43,7 @@ int Bank::get_liquidity() const
 	return (_liquidity);
 }
 
-const Bank::Account &Bank::operator[](int id) const
+const Bank::Account &Bank::operator[](const int id) const
 {
 	accounts::const_iterator account = _client_accounts.find(id);
 	if (account == _client_accounts.end())
@@ -51,7 +51,7 @@ const Bank::Account &Bank::operator[](int id) const
 	return (*account->second);
 }
 
-const Bank::Account &Bank::create_account(int initial_deposit)
+const Bank::Account &Bank::create_account(const int initial_deposit)
 {
 	if (initial_deposit < 0)
 		throw std::invalid_argument("Initial deposit must be non-negative");
@@ -60,7 +60,7 @@ const Bank::Account &Bank::create_account(int initial_deposit)
 	return (*new_account);
 }
 
-int Bank::delete_account(int id)
+int Bank::delete_account(const int id)
 {
 	const Account &deleted = operator[](id);
 	const int balance = deleted._value;
@@ -69,7 +69,7 @@ int Bank::delete_account(int id)
 	return (balance);
 }
 
-const Bank::Account &Bank::give_loan(int id, int loan)
+const Bank::Account &Bank::give_loan(const int id, const int loan)
 {
 	Account &loaned = operator[](id);
 	if (loan > _liquidity)
@@ -79,28 +79,28 @@ const Bank::Account &Bank::give_loan(int id, int loan)
 	return (loaned);
 }
 
-const Bank::Account &Bank::debit_account(int id, int debit)
+const Bank::Account &Bank::debit_account(const int id, const int debit)
 {
 	Account &debited = operator[](id);
 	debited._value -= debit;
 	return (debited);
 }
 
-const Bank::Account &Bank::credit_account(int id, int credit)
+const Bank::Account &Bank::credit_account(const int id, const int credit)
 {
 	Account &credited = operator[](id);
 	credited._value += charge_commission(credit);
 	return (credited);
 }
 
-int Bank::charge_commission(int inflow)
+int Bank::charge_commission(const int inflow)
 {
 	const int commission = static_cast<int>(static_cast<float>(inflow) * 0.05);
 	_liquidity += commission;
 	return (inflow - commission);
 }
 
-Bank::Account &Bank::operator[](int id)
+Bank::Account &Bank::operator[](const int id)
 {
 	accounts::iterator account = _client_accounts.find(id);
 	if (account == _client_accounts.end())

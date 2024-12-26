@@ -9,7 +9,7 @@ class WorkshopBase
 {
 	private:
 		// deleted {
-		WorkshopBase(const WorkshopBase&) {}
+		WorkshopBase(const WorkshopBase&);
 		WorkshopBase &operator=(const WorkshopBase&);
 		// } deleted
 	protected:
@@ -20,6 +20,8 @@ class WorkshopBase
 		virtual ~WorkshopBase();
 		void remove(Worker *worker);
 		void executeWorkDay();
+		virtual void enlist(Worker *worker) = 0;
+		const workers &get_workers() const;
 };
 
 #endif
