@@ -26,5 +26,5 @@ void WorkshopBase::executeWorkDay()
 
 const WorkshopBase::workers &WorkshopBase::get_workers() const
 {
-	return _workers;
+	return (_workers);
 }

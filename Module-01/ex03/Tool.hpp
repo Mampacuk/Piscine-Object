@@ -18,7 +18,7 @@ class Tool
 		void increment_usage();
 	public:
 		Tool();
-		~Tool();
+		virtual ~Tool();
 		int get_number_of_uses() const;
 		const Worker *get_owner() const;
 		void set_owner(Worker *owner);
