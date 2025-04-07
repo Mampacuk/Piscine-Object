@@ -10,10 +10,13 @@ class Workshop : public WorkshopBase
 	public:
 		Workshop() : WorkshopBase() {}
 		~Workshop() {}
-		Workshop(const Workshop &copy) : WorkshopBase(copy) {}
+		Workshop(const Workshop &copy)
+		{
+			*this = copy;
+		}
 		Workshop &operator=(const Workshop &rhs)
 		{
-			WorkshopBase::operator=(rhs);
+			_workers = rhs._workers;
 			return (*this);
 		}
 
