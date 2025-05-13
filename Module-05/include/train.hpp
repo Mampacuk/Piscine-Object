@@ -7,8 +7,6 @@
 
 namespace sim
 {
-	class node;
-	
 	class train
 	{
 		size_t _id;
