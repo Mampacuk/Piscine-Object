@@ -4,6 +4,7 @@
 #include "StreamLogger.hpp"
 
 #include <vector>
+#include <list>
 #include <iostream>
 
 // the Dependency-Inversion Principle (DIP) states that:
@@ -25,6 +26,9 @@ int main()
 	loggers.push_back(new StreamLogger(std::cout, new DateHeader));					// stream logger, date header
 	loggers.push_back(new StreamLogger(std::cout, new ConstantHeader("[blabla] ")));// stream logger, constant header
 
-	for (unsigned int i = 0; i < loggers.size(); i++)
-		loggers[i]->write("Dependency Inversion");
+	std::list<std::string> strings;
+	strings.push_back(std::string("Dependency Inversion"));
+	for (size_t i = 0; i < loggers.size(); i++)
+		for (std::list<std::string>::iterator it = strings.begin(); it != strings.end(); it++)
+			loggers[i]->write(*it);
 }
