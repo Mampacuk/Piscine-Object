@@ -5,7 +5,7 @@ INC_DIR		= include
 SRCS		= $(wildcard $(SRC_DIR)/*.cpp)
 OBJS		= $(SRCS:.cpp=.o)
 CXX			= c++
-CXXFLAGS	= -Wall -Wextra -Werror -g -I$(INC_DIR)
+CXXFLAGS	= -Wall -Wextra -Werror -I$(INC_DIR)
 RM			= rm -rf
 
 OUTPUT_EXT	= .result
@@ -23,6 +23,7 @@ clean:
 
 fclean: clean
 	@$(RM) $(NAME)
+	@$(RM) *$(OUTPUT_EXT)
 
 re: fclean all
 

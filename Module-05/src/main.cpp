@@ -13,8 +13,7 @@ int main(int argc, char **argv)
 	{
 		try
 		{
-			sim::simulation trains(argv[consts::ints::arg1], argv[consts::ints::arg2]);
-			trains.run();
+			sim::simulation::get().run(argv[consts::ints::arg1], argv[consts::ints::arg2]);
 		}
 		catch (const algo::algorithmic_error &e)
 		{

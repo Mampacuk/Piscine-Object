@@ -165,17 +165,9 @@ namespace algo
 
 	bool time_dependent_graph::incident(const edge &e, const vertex &u) const
 	{
-		// const sim::node &n = dynamic_cast<const sim::node&>(u);
-		// const sim::node &e1 = dynamic_cast<const sim::node&>(e.first());
-		// const sim::node &e2 = dynamic_cast<const sim::node&>(e.second());
-		// const sim::railroad &r = dynamic_cast<const sim::railroad&>(e);
-		// std::cout << "checking incidence of vertex=" << n.get_name() << " with edge l=" << r.get_length() << " (" << e1.get_name() << ", " << e2.get_name() << ")" << std::endl;
 		if (!e.contains(u))
 			return (false);
 		const float u_d = _time_offset + u.get_d() + compute_delay(dynamic_cast<const delay_vertex&>(u));
-		//
-		// std::cout << "querying booking of timeslot {" << u_d << ", " <<  u_d + w()(e) << "}" << std::endl << std::endl;
-		//
 		return (dynamic_cast<const time_dependent_edge&>(e).available({u_d, u_d + w()(e)}));
  	}
 

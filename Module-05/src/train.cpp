@@ -10,9 +10,6 @@
 #include <iterator>
 #include <optional>
 
-// to delete
-#include <iostream>
-
 namespace
 {
 	// expects a speed-up event in the beginning, and a stopped event at the end.

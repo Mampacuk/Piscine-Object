@@ -11,11 +11,14 @@
 #include <random>
 #include <sstream>
 
-// to delete
-#include <iostream>
-
 namespace sim
 {
+	simulation &simulation::get()
+	{
+		static simulation instance;
+		return (instance);
+	}
+
 	void simulation::insert_train(train new_train)
 	{
 		if (std::find_if(_trains.begin(), _trains.end(),
@@ -24,18 +27,18 @@ namespace sim
 		_trains.push_back(std::move(new_train));
 	}
 
-	void simulation::insert_railroad(railroad new_railroad)
+	void simulation::insert_railroad(std::shared_ptr<railroad> new_railroad)
 	{
-		if (_network.find(new_railroad))
+		if (_network.find(*new_railroad))
 			throw std::invalid_argument("Duplicate railroads are not allowed");
-		_network.insert_edge(std::make_shared<railroad>(new_railroad));
+		_network.insert_edge(std::move(new_railroad));
 	}
 
-	void simulation::insert_node(node new_node)
+	void simulation::insert_node(std::shared_ptr<node> new_node)
 	{
-		if (find_node(new_node.get_name()))
+		if (find_node(new_node->get_name()))
 			throw std::invalid_argument("Duplicate nodes are not allowed");
-		_network.insert_vertex(std::make_shared<node>(new_node));
+		_network.insert_vertex(std::move(new_node));
 	}
 
 	node_ptr simulation::find_node(const std::string &name, bool throw_exception)
@@ -64,7 +67,7 @@ namespace sim
 			throw parsing_error("Expected a \"Node\" token at the start of line in the node section");
 		else if (!!(iss >> trailing_token))
 			throw parsing_error("Extra tokens in a node definition in rail network file");
-		insert_node(node(node_name_token));
+		insert_node(create_graph_object<node>(node_name_token));
 		return (false);
 	}
 
@@ -87,7 +90,9 @@ namespace sim
 			throw parsing_error("Extra tokens in a railroad definition in rail network file");
 		else if (length < consts::sim::min_railroad_length)
 			throw parsing_error("Railroad too short (minimum is 1km)");
-		insert_railroad(railroad(*find_node(first_node_name, true), *find_node(second_node_name, true), math::kilo * length, speed_limit));
+		else if (speed_limit <= 0.f)
+			throw parsing_error("Speed limit must be positive");
+		insert_railroad(create_graph_object<railroad>(*find_node(first_node_name, true), *find_node(second_node_name, true), math::kilo * length, speed_limit));
 		return (true);
 	}
 
@@ -100,12 +105,14 @@ namespace sim
 			throw parsing_error("Failed to parse a train definition in train composition file");
 		else if (!!(iss >> trailing_token))
 			throw parsing_error("Extra tokens in a train definition in train composition file");
+		else if (mass <= 0.f || friction <= 0.f || accel_force <= 0.f || decel_force <= 0.f)
+			throw parsing_error("Train characteristics must be positive");
 		insert_train(train(train_name, math::kilo * mass, friction, math::kilo * accel_force, math::kilo * decel_force,
 						   *find_node(source_node_name, true), *find_node(destination_node_name, true), util::extract_mins(departure_time),
 						   util::extract_mins(stop_duration)));
 	}
 
-	simulation::simulation(const char *rail_network, const char *train_composition)
+	void simulation::initialize(const char *rail_network, const char *train_composition)
 	{
 		{
 			std::ifstream network_config(rail_network);
@@ -134,8 +141,9 @@ namespace sim
 		}
 	}
 
-	void simulation::run()
+	void simulation::run(const char *rail_network, const char *train_composition)
 	{
+		initialize(rail_network, train_composition);
 		// generate events
 		_events.clear();
 		for (auto &vertex : _network.vertices())
@@ -161,11 +169,6 @@ namespace sim
 				throw algo::algorithmic_error("No path was found for train \"" + train.get_name() + "\"");
 			train.set_path(cast_path(algo::construct_path(_network)));
 			train.book_path();
-			// debug
-			std::cout << "train " << train.get_name() << " path:" << std::endl;
-			for (auto &[u, e, v] : train.get_path())
-				std::cout << u.get_name() << " -> " << v.get_name() << std::endl;
-			// debug //
 			log_train_journey(train);
 		}
 	}
@@ -184,46 +187,26 @@ namespace sim
 		for (auto &[u, r, v] : p)
 		{
 			train::events events;
+			time_spent += u.get_delay();
 			const float railroad_start_time = time_spent;
 			const float railroad_start_distance = distance_covered;
 			const float railroad_travel_time = t.compute_travel_time(r, &events);
 			const float railroad_length = r.get_length();
-			time_spent += u.get_delay();
-			// debug
-			std::cout << "describing railroad (" << u.get_name() << ", " << v.get_name() << ")" << std::endl;
-			std::cout << "events distances: ";
-			for (const auto &e : events)
-				std::cout << "{" << train::event::to_string(e.event_type) << ":" << e.distance << "} ";
-			std::cout << std::endl;
-			// debug
 			for (const auto &e : events)
 			{
 				file << "[" << util::convert_mins(railroad_start_time + e.time) << "] - [" << u.get_name() << "][" << v.get_name() << "] - ["
 					 << (journey_length - railroad_start_distance - e.distance) << "km] - [" << train::event::to_string(e.event_type) << "] - ";
 				const size_t number_of_segments = std::ceil(railroad_length / consts::sim::railroad_segment_length);
-				// std::cout << "segments: " << number_of_segments << ", e.distance=" << e.distance << 
 				for (size_t i = 0; i < number_of_segments; i++)
 				{
 					if ((e.distance >= i * consts::sim::railroad_segment_length && e.distance < (i + 1) * consts::sim::railroad_segment_length)
 						|| (e.event_type == train::event::type::stopped && i == number_of_segments - 1))
 						file << "[x]";
 					else
-					{
-						// debug
-						// if (e.event_type == train::event::type::braking || e.event_type == train::event::type::maintain || e.event_type == train::event::type::stopped)
-						// std::cout << "(" << train::event::to_string(e.event_type) << ") block " << i << "/" << number_of_segments << " was displayed as [] because it's not the case that " 
-						// 			<< i << "*" << consts::sim::railroad_segment_length << "=" << i * consts::sim::railroad_segment_length
-						// 			<< " <= e.distance=" << e.distance << " < " << i + 1 << " * " << consts::sim::railroad_segment_length << "="
-						// 			<< (i + 1) * consts::sim::railroad_segment_length << std::endl;
-						// debug
 						file << "[ ]";
-					}
 				}
 				file << std::endl;
 			}
-			// debug
-			// std::cout << std::endl;
-			// debug
 			time_spent += railroad_travel_time;
 			distance_covered += railroad_length;
 		}
