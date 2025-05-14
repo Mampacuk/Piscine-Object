@@ -23,7 +23,7 @@ public:
 	bool enter(std::weak_ptr<Person> person);
 	void exit(std::weak_ptr<Person> person);
 	const std::vector<std::weak_ptr<Person>> &get_occupants() const { return (_occupants); }
-	std::ostream &print_occupants(std::ostream &o = std::cout) const { return (ft::print_weak_ptr_container_field(o, _occupants, Person::name)); }
+	std::ostream &print_occupants(std::ostream &o = std::cout) const { return (ft::print_weak_ptr_container_field(o, _occupants, &Person::name)); }
 };
 
 std::ostream &operator<<(std::ostream &o, const Room &r);

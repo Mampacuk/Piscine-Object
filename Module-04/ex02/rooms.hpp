@@ -22,7 +22,7 @@ public:
 	bool canEnter(std::shared_ptr<Person> person) const;
 	void enter(std::shared_ptr<Person> person) { if (canEnter(person)) _occupants.push_back(std::move(person)); }
 	void exit(std::shared_ptr<Person> person) { ft::erase(_occupants, std::move(person)); }
-	std::ostream &print_occupants(std::ostream &o = std::cout) const { return (ft::print_shared_ptr_container_field(o, _occupants, Person::name)); }
+	std::ostream &print_occupants(std::ostream &o = std::cout) const { return (ft::print_shared_ptr_container_field(o, _occupants, &Person::name)); }
 };
 
 std::ostream &operator<<(std::ostream &o, const Room &r);

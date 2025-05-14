@@ -5,7 +5,7 @@ INC_DIR		= include
 SRCS		= $(wildcard $(SRC_DIR)/*.cpp)
 OBJS		= $(SRCS:.cpp=.o)
 CXX			= c++
-CXXFLAGS	= -Wall -Wextra -Werror -I$(INC_DIR)
+CXXFLAGS	= -std=c++17 -Wall -Wextra -Werror -I$(INC_DIR)
 RM			= rm -rf
 
 OUTPUT_EXT	= .result

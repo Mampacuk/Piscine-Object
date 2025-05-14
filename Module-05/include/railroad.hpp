@@ -13,8 +13,8 @@ namespace sim
 		railroad() = delete;
 		railroad(const railroad&) = default;
 		railroad(railroad&&) = default;
-		railroad &operator=(const railroad&) = default;
-		railroad &operator=(railroad&&) = default;
+		railroad &operator=(const railroad&) = delete;
+		railroad &operator=(railroad&&) = delete;
 		~railroad() = default;
 
 		float get_length() const;

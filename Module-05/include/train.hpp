@@ -27,8 +27,8 @@ namespace sim
 		train() = delete;
 		train(const train&) = default;
 		train(train&&) = default;
-		train& operator=(const train&) = default;
-		train& operator=(train&&) = default;
+		train& operator=(const train&) = delete;
+		train& operator=(train&&) = delete;
 		~train() = default;
 
 		void set_path(path journey);
